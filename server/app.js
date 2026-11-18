@@ -6,6 +6,7 @@ const { loadUser, requireLogin } = require('./middleware/auth');
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
 const adRoutes = require('./routes/ads');
+const apiRoutes = require('./routes/api');
 
 const app = express();
 
@@ -33,6 +34,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('/api', apiRoutes);
 app.use(authRoutes);
 app.use('/admin', adminRoutes);
 app.use('/admin/ads', adRoutes);
