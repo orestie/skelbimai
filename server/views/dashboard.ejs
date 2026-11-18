@@ -1,0 +1,41 @@
+<%- include('partials/header') %>
+
+<h1 class="h3 mb-4">Welcome, <%= currentUser.username %>!</h1>
+
+<div class="row g-3 mb-4">
+  <div class="col-sm-4">
+    <div class="card text-center shadow-sm">
+      <div class="card-body">
+        <div class="display-6"><%= stats.ads %></div>
+        <div class="text-muted">Ads</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card text-center shadow-sm">
+      <div class="card-body">
+        <div class="display-6"><%= stats.categories %></div>
+        <div class="text-muted">Categories</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card text-center shadow-sm">
+      <div class="card-body">
+        <div class="display-6"><%= stats.users %></div>
+        <div class="text-muted">Users</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="alert alert-info">
+  You are logged in as <strong><%= currentUser.role %></strong>.
+  <% if (currentUser.role === 'admin') { %>
+    You can manage categories, users and content.
+  <% } else { %>
+    You can create and manage your own ads.
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>
