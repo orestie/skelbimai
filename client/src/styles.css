@@ -1,0 +1,33 @@
+body {
+  background-color: #f4f6f9;
+}
+
+.search-hero {
+  background: linear-gradient(135deg, #0d6efd, #6610f2);
+}
+
+.ad-card {
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.ad-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.ad-card-img {
+  height: 200px;
+  object-fit: cover;
+}
+
+.favorite-btn {
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.ad-details-img {
+  width: 100%;
+  max-height: 450px;
+  object-fit: contain;
+  background-color: #e9ecef;
+}
