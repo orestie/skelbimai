@@ -18,10 +18,19 @@
         <div class="collapse navbar-collapse" id="mainNav">
           <ul class="navbar-nav me-auto">
             <li class="nav-item"><a class="nav-link" href="/admin">Dashboard</a></li>
-              <li class="nav-item"><a class="nav-link" href="/admin/ads">My ads</a></li>
+            <li class="nav-item"><a class="nav-link" href="/admin/ads">My ads</a></li>
+            <li class="nav-item"><a class="nav-link" href="/admin/ads/comments">Comments</a></li>
+            <li class="nav-item"><a class="nav-link" href="/admin/ads/saved">Saved ads</a></li>
             <% if (currentUser.role === 'admin') { %>
-              <li class="nav-item"><a class="nav-link" href="/admin/categories">Categories</a></li>
-              <li class="nav-item"><a class="nav-link" href="/admin/users">Users</a></li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-warning" href="#" role="button" data-bs-toggle="dropdown">Admin</a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="/admin/categories">Categories</a></li>
+                  <li><a class="dropdown-item" href="/admin/users">Users</a></li>
+                  <li><a class="dropdown-item" href="/admin/all-ads">All ads</a></li>
+                  <li><a class="dropdown-item" href="/admin/all-comments">All comments</a></li>
+                </ul>
+              </li>
             <% } %>
           </ul>
           <div class="d-flex align-items-center gap-3">

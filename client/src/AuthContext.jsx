@@ -12,6 +12,11 @@ export function AuthProvider({ children }) {
       .then((data) => setUser(data.user))
       .catch(() => setUser(null))
       .finally(() => setLoading(false))
+
+    // The server forgot the session (for example after a restart), so log out here too
+    const handleExpired = () => setUser(null)
+    window.addEventListener('session-expired', handleExpired)
+    return () => window.removeEventListener('session-expired', handleExpired)
   }, [])
 
   async function login(username, password) {

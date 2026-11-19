@@ -86,4 +86,66 @@ router.post('/users/:id/toggle-block', requireAdmin, (req, res) => {
   res.redirect('/admin/users');
 });
 
+router.get('/all-ads', requireAdmin, (req, res) => {
+  const ads = db
+    .prepare(
+      `SELECT ads.id, ads.title, ads.price, ads.image, ads.is_blocked, ads.created_at,
+              categories.name AS category_name, users.username AS author
+       FROM ads
+       JOIN categories ON categories.id = ads.category_id
+       JOIN users ON users.id = ads.user_id
+       ORDER BY ads.created_at DESC, ads.id DESC`
+    )
+    .all();
+  res.render('admin/ads', { title: 'All ads', ads });
+});
+
+router.post('/all-ads/:id/toggle-block', requireAdmin, (req, res) => {
+  const ad = db.prepare('SELECT id, title, is_blocked FROM ads WHERE id = ?').get(Number(req.params.id));
+  if (!ad) {
+    req.session.flash = { type: 'danger', text: 'Ad not found.' };
+    return res.redirect('/admin/all-ads');
+  }
+
+  const newValue = ad.is_blocked ? 0 : 1;
+  db.prepare('UPDATE ads SET is_blocked = ? WHERE id = ?').run(newValue, ad.id);
+  req.session.flash = {
+    type: 'success',
+    text: `Ad "${ad.title}" was ${newValue ? 'blocked' : 'unblocked'}.`,
+  };
+  res.redirect('/admin/all-ads');
+});
+
+router.get('/all-comments', requireAdmin, (req, res) => {
+  const comments = db
+    .prepare(
+      `SELECT comments.id, comments.text, comments.created_at, comments.is_blocked,
+              ads.id AS ad_id, ads.title AS ad_title, users.username AS author
+       FROM comments
+       JOIN ads ON ads.id = comments.ad_id
+       JOIN users ON users.id = comments.user_id
+       ORDER BY comments.created_at DESC, comments.id DESC`
+    )
+    .all();
+  res.render('admin/comments', { title: 'All comments', comments });
+});
+
+router.post('/all-comments/:id/toggle-block', requireAdmin, (req, res) => {
+  const comment = db
+    .prepare('SELECT id, is_blocked FROM comments WHERE id = ?')
+    .get(Number(req.params.id));
+  if (!comment) {
+    req.session.flash = { type: 'danger', text: 'Comment not found.' };
+    return res.redirect('/admin/all-comments');
+  }
+
+  const newValue = comment.is_blocked ? 0 : 1;
+  db.prepare('UPDATE comments SET is_blocked = ? WHERE id = ?').run(newValue, comment.id);
+  req.session.flash = {
+    type: 'success',
+    text: `Comment was ${newValue ? 'blocked' : 'unblocked'}.`,
+  };
+  res.redirect('/admin/all-comments');
+});
+
 module.exports = router;

@@ -1,0 +1,57 @@
+<%- include('../partials/header') %>
+
+<h1 class="h3 mb-2">All ads</h1>
+<p class="text-muted mb-4">Blocked ads are hidden from the public site.</p>
+
+<% if (ads.length === 0) { %>
+  <div class="alert alert-secondary">There are no ads yet.</div>
+<% } else { %>
+  <div class="card shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Image</th>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Author</th>
+            <th class="text-end">Price</th>
+            <th>Status</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% ads.forEach((ad) => { %>
+            <tr>
+              <td>
+                <img src="/uploads/<%= ad.image %>" alt="" class="rounded" style="width: 64px; height: 48px; object-fit: cover;">
+              </td>
+              <td><%= ad.title %></td>
+              <td><%= ad.category_name %></td>
+              <td><%= ad.author %></td>
+              <td class="text-end text-nowrap"><%= ad.price.toFixed(2) %> €</td>
+              <td>
+                <% if (ad.is_blocked) { %>
+                  <span class="badge bg-danger">Blocked</span>
+                <% } else { %>
+                  <span class="badge bg-success">Visible</span>
+                <% } %>
+              </td>
+              <td class="text-end">
+                <form action="/admin/all-ads/<%= ad.id %>/toggle-block" method="POST" class="d-inline">
+                  <% if (ad.is_blocked) { %>
+                    <button class="btn btn-outline-success btn-sm"><i class="bi bi-unlock"></i> Unblock</button>
+                  <% } else { %>
+                    <button class="btn btn-outline-danger btn-sm"><i class="bi bi-lock"></i> Block</button>
+                  <% } %>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% } %>
+
+<%- include('../partials/footer') %>

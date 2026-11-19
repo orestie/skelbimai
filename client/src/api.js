@@ -7,6 +7,10 @@ export async function api(path, options = {}) {
 
   const data = await response.json().catch(() => ({}))
 
+  if (response.status === 401) {
+    window.dispatchEvent(new Event('session-expired'))
+  }
+
   if (!response.ok) {
     const message = data.errors ? data.errors.join(' ') : data.error || 'Something went wrong.'
     throw new Error(message)

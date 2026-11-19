@@ -57,7 +57,64 @@ router.get('/', (req, res) => {
     .all(req.user.id);
   res.render('ads/index', { title: 'My ads', ads });
 });
+router.get('/comments', (req, res) => {
+  const comments = db
+    .prepare(
+      `SELECT comments.id, comments.text, comments.created_at, comments.is_blocked,
+              ads.id AS ad_id, ads.title AS ad_title, users.username AS author
+       FROM comments
+       JOIN ads ON ads.id = comments.ad_id
+       JOIN users ON users.id = comments.user_id
+       WHERE ads.user_id = ?
+       ORDER BY comments.created_at DESC, comments.id DESC`
+    )
+    .all(req.user.id);
+  res.render('ads/comments', { title: 'Comments on my ads', comments });
+});
 
+router.post('/comments/:commentId/delete', (req, res) => {
+  const comment = db
+    .prepare(
+      `SELECT comments.id FROM comments
+       JOIN ads ON ads.id = comments.ad_id
+       WHERE comments.id = ? AND ads.user_id = ?`
+    )
+    .get(Number(req.params.commentId), req.user.id);
+
+  if (!comment) {
+    req.session.flash = { type: 'danger', text: 'Comment not found or it is not under your ad.' };
+    return res.redirect('/admin/ads/comments');
+  }
+
+  db.prepare('DELETE FROM comments WHERE id = ?').run(comment.id);
+  req.session.flash = { type: 'success', text: 'Comment was deleted.' };
+  res.redirect('/admin/ads/comments');
+});
+
+router.get('/saved', (req, res) => {
+  const ads = db
+    .prepare(
+      `SELECT ads.id, ads.title, ads.price, ads.image, ads.is_blocked,
+              categories.name AS category_name, users.username AS author
+       FROM favorites
+       JOIN ads ON ads.id = favorites.ad_id
+       JOIN categories ON categories.id = ads.category_id
+       JOIN users ON users.id = ads.user_id
+       WHERE favorites.user_id = ?
+       ORDER BY ads.created_at DESC, ads.id DESC`
+    )
+    .all(req.user.id);
+  res.render('ads/saved', { title: 'Saved ads', ads });
+});
+
+router.post('/saved/:adId/delete', (req, res) => {
+  db.prepare('DELETE FROM favorites WHERE user_id = ? AND ad_id = ?').run(
+    req.user.id,
+    Number(req.params.adId)
+  );
+  req.session.flash = { type: 'success', text: 'Ad was removed from your saved list.' };
+  res.redirect('/admin/ads/saved');
+});
 router.get('/new', (req, res) => {
   res.render('ads/form', {
     title: 'New ad',
