@@ -41,7 +41,7 @@ router.post('/register', (req, res) => {
 
 router.post('/logout', (req, res) => {
   req.session.destroy(() => {
-    res.redirect('/login');
+    res.redirect('/admin/login');
   });
 });
 

@@ -22,14 +22,14 @@ function loadUser(req, res, next) {
 
 function requireLogin(req, res, next) {
   if (!req.user) {
-    return res.redirect('/login');
+    return res.redirect('/admin/login');
   }
   next();
 }
 
 function requireAdmin(req, res, next) {
   if (!req.user) {
-    return res.redirect('/login');
+    return res.redirect('/admin/login');
   }
   if (req.user.role !== 'admin') {
     return res.status(403).render('error', {

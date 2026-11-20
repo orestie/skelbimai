@@ -10,7 +10,7 @@
           <div class="alert alert-danger"><%= error %></div>
         <% } %>
 
-        <form action="/login" method="POST">
+        <form action="/admin/login" method="POST">
           <div class="mb-3">
             <label for="username" class="form-label">Username</label>
             <input type="text" class="form-control" id="username" name="username" value="<%= username %>" required>
@@ -23,7 +23,10 @@
         </form>
 
         <p class="text-center mt-3 mb-0">
-          No account? <a href="/register">Register</a>
+          No account? <a href="/admin/register">Register</a>
+        </p>
+        <p class="text-center mt-2 mb-0">
+          <a href="/" class="small"><i class="bi bi-arrow-left"></i> Back to the public site</a>
         </p>
       </div>
     </div>

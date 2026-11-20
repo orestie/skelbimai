@@ -1,6 +1,6 @@
 const path = require('path');
 const { DatabaseSync } = require('node:sqlite');
-const bcrypt = require('bcryptjs');
+const seedDemoData = require('./seed');
 
 const db = new DatabaseSync(path.join(__dirname, 'skelbimai.db'));
 
@@ -53,18 +53,7 @@ db.exec(`
 const userCount = db.prepare('SELECT COUNT(*) AS count FROM users').get().count;
 
 if (userCount === 0) {
-  const addUser = db.prepare(
-    'INSERT INTO users (username, email, password_hash, role) VALUES (?, ?, ?, ?)'
-  );
-  addUser.run('admin', 'admin@example.com', bcrypt.hashSync('admin123', 10), 'admin');
-  addUser.run('user', 'user@example.com', bcrypt.hashSync('user123', 10), 'user');
-
-  const addCategory = db.prepare('INSERT INTO categories (name) VALUES (?)');
-  ['Electronics', 'Vehicles', 'Home & Garden', 'Clothing', 'Services'].forEach((name) =>
-    addCategory.run(name)
-  );
-
-  console.log('Database created with test users and categories');
+  seedDemoData(db);
 }
 
 module.exports = db;

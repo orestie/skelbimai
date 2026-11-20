@@ -35,13 +35,9 @@ app.use((req, res, next) => {
 });
 
 app.use('/api', apiRoutes);
-app.use(authRoutes);
+app.use('/admin', authRoutes);
 app.use('/admin', adminRoutes);
 app.use('/admin/ads', adRoutes);
-
-app.get('/', (req, res) => {
-  res.redirect('/admin');
-});
 
 app.get('/admin', requireLogin, (req, res) => {
   const stats = {
@@ -50,6 +46,18 @@ app.get('/admin', requireLogin, (req, res) => {
     ads: db.prepare('SELECT COUNT(*) AS count FROM ads').get().count,
   };
   res.render('dashboard', { title: 'Dashboard', stats });
+});
+
+const clientDist = path.join(__dirname, '..', 'client', 'dist');
+app.use(express.static(clientDist));
+
+// Every other address belongs to the React app (SPA), so always send its index.html
+app.get('/{*page}', (req, res) => {
+  res.sendFile(path.join(clientDist, 'index.html'), (err) => {
+    if (err) {
+      res.status(404).send('React app is not built yet. Run "npm run build" in the project folder.');
+    }
+  });
 });
 
 app.listen(3000, () => {
